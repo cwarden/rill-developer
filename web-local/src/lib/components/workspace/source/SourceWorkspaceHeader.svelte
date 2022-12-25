@@ -24,7 +24,6 @@
     MetricsEventScreenName,
     MetricsEventSpace,
   } from "@rilldata/web-local/lib/metrics/service/MetricsTypes";
-  import { selectTimestampColumnFromSchema } from "@rilldata/web-local/lib/svelte-query/column-selectors";
   import { useDashboardNames } from "@rilldata/web-local/lib/svelte-query/dashboards";
   import { invalidateAfterReconcile } from "@rilldata/web-local/lib/svelte-query/invalidation";
   import { useModelNames } from "@rilldata/web-local/lib/svelte-query/models";
@@ -70,8 +69,6 @@
   $: dashboardNames = useDashboardNames(runtimeInstanceId);
   const createModelMutation = useRuntimeServicePutFileAndReconcile();
   const createDashboardFromSourceMutation = useCreateDashboardFromSource();
-
-  $: timestampColumns = selectTimestampColumnFromSchema(source?.schema);
 
   $: connector = $getSource.data?.entry?.source.connector as string;
 
@@ -266,7 +263,6 @@
         <Tooltip location="bottom" alignment="right" distance={16}>
           <Button
             type="primary"
-            disabled={!timestampColumns?.length}
             on:click={() => handleCreateDashboardFromSource(sourceName)}
           >
             <ResponsiveButtonText collapse={width < 800}>
@@ -276,11 +272,7 @@
             <Explore size="16px" />
           </Button>
           <TooltipContent slot="tooltip-content">
-            {#if timestampColumns?.length}
-              Create a dashboard for this source
-            {:else}
-              This data source does not have a TIMESTAMP column
-            {/if}
+            Create a dashboard for this source
           </TooltipContent>
         </Tooltip>
       </PanelCTA>

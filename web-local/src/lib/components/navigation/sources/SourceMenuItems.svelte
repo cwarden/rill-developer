@@ -18,7 +18,6 @@
   } from "@rilldata/web-common/runtime-client";
   import { appStore } from "@rilldata/web-local/lib/application-state-stores/app-store";
   import { BehaviourEventMedium } from "@rilldata/web-local/lib/metrics/service/BehaviourEventTypes";
-  import { schemaHasTimestampColumn } from "@rilldata/web-local/lib/svelte-query/column-selectors";
   import { invalidateAfterReconcile } from "@rilldata/web-local/lib/svelte-query/invalidation";
   import {
     useSourceFromYaml,
@@ -196,18 +195,12 @@
 </MenuItem>
 
 <MenuItem
-  disabled={!schemaHasTimestampColumn(source?.schema)}
   icon
   on:select={() => handleCreateDashboardFromSource(sourceName)}
   propogateSelect={false}
 >
   <Explore slot="icon" />
   Autogenerate dashboard
-  <svelte:fragment slot="description">
-    {#if !schemaHasTimestampColumn(source?.schema)}
-      Requires a timestamp column
-    {/if}
-  </svelte:fragment>
 </MenuItem>
 
 {#if $getSource?.data?.entry?.source?.connector === "local_file"}

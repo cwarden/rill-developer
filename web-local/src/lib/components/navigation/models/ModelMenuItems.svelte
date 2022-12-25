@@ -14,7 +14,6 @@
   import { appStore } from "@rilldata/web-local/lib/application-state-stores/app-store";
   import { fileArtifactsStore } from "@rilldata/web-local/lib/application-state-stores/file-artifacts-store";
   import { deleteFileArtifact } from "@rilldata/web-local/lib/svelte-query/actions";
-  import { schemaHasTimestampColumn } from "@rilldata/web-local/lib/svelte-query/column-selectors";
   import { invalidateAfterReconcile } from "@rilldata/web-local/lib/svelte-query/invalidation";
   import { useModelNames } from "@rilldata/web-local/lib/svelte-query/models";
   import { EntityType } from "@rilldata/web-local/lib/temp/entity";
@@ -128,18 +127,12 @@
 </script>
 
 <MenuItem
-  disabled={!schemaHasTimestampColumn(model?.schema)}
   icon
   on:select={() => createDashboardFromModel(modelName)}
   propogateSelect={false}
 >
   <Explore slot="icon" />
   Autogenerate dashboard
-  <svelte:fragment slot="description">
-    {#if !schemaHasTimestampColumn(model?.schema)}
-      Requires a timestamp column
-    {/if}
-  </svelte:fragment>
 </MenuItem>
 <Divider />
 <MenuItem
