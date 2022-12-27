@@ -32,18 +32,12 @@ func (c *connection) Execute(ctx context.Context, stmt *drivers.Statement) (*dri
 		return nil, err
 	}
 
-	rows := j.result
-	schema, err := rowsToSchema(rows)
+	schema, err := rowsToSchema(j.result)
 	if err != nil {
 		return nil, err
 	}
 
-	err = rows.Err()
-	if err != nil {
-		return nil, err
-	}
-
-	return &drivers.Result{Rows: rows, Schema: schema}, nil
+	return &drivers.Result{Rows: j.result, Schema: schema}, nil
 }
 
 func (c *connection) executeQuery(ctx context.Context, j *job) error {
@@ -88,6 +82,11 @@ func rowsToSchema(r *sqlx.Rows) (*runtimev1.StructType, error) {
 			Name: ct.Name(),
 			Type: t,
 		}
+	}
+
+	err = r.Err()
+	if err != nil {
+		return nil, err
 	}
 
 	return &runtimev1.StructType{Fields: fields}, nil
