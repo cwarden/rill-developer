@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
+  import { IconButton } from "@rilldata/web-common/components/button";
+  import { Callout } from "@rilldata/web-common/components/callout";
+  import AlertTriangle from "@rilldata/web-common/components/icons/AlertTriangle.svelte";
+  import CrossIcon from "@rilldata/web-common/components/icons/CrossIcon.svelte";
   import TimestampIcon from "@rilldata/web-common/components/icons/TimestampType.svelte";
   import Tooltip from "@rilldata/web-common/components/tooltip/Tooltip.svelte";
   import TooltipContent from "@rilldata/web-common/components/tooltip/TooltipContent.svelte";
@@ -7,6 +12,8 @@
 
   export let metricsInternalRep;
   export let selectedModel: V1Model;
+
+  let selection;
 
   $: timeColumnSelectedValue =
     $metricsInternalRep.getMetricKey("timeseries") || "__DEFAULT_VALUE__";
@@ -23,6 +30,19 @@
       "timeseries",
       (<HTMLSelectElement>evt.target).value
     );
+  }
+
+  function removeTimeseries() {
+    $metricsInternalRep.updateMetricKey("timeseries", "");
+  }
+
+  function noTimeseriesCTA() {
+    if (timestampColumns?.length) {
+      $metricsInternalRep.updateMetricKey("timeseries", timestampColumns[0]);
+    } else {
+      let sourceModelName = $metricsInternalRep.getMetricKey("model");
+      goto(`/model/${sourceModelName}`);
+    }
   }
 
   let tooltipText = "";
@@ -51,6 +71,7 @@
       suppress={tooltipText === undefined}
     >
       <select
+        bind:this={selection}
         class="hover:bg-gray-100 rounded border border-6 border-transparent hover:border-gray-300"
         disabled={dropdownDisabled}
         on:change={updateMetricsDefinitionHandler}
@@ -70,4 +91,36 @@
       </TooltipContent>
     </Tooltip>
   </div>
+  {#if timeColumnSelectedValue !== "__DEFAULT_VALUE__"}
+    <Tooltip location="bottom" distance={8}>
+      <IconButton
+        compact
+        marginClasses="ml-1"
+        on:click={() => {
+          removeTimeseries();
+        }}
+      >
+        <CrossIcon color="gray" size="12px" />
+      </IconButton>
+      <TooltipContent slot="tooltip-content">
+        Remove timestamp column
+      </TooltipContent>
+    </Tooltip>
+  {:else}
+    <Tooltip location="bottom" distance={8}>
+      <IconButton
+        compact
+        marginClasses="ml-1"
+        on:click={() => {
+          noTimeseriesCTA();
+        }}
+      >
+        <AlertTriangle color="gray" size="16px" />
+      </IconButton>
+      <TooltipContent slot="tooltip-content">
+        No timestamp is selected. Add a timeseries to see timeseries charts on
+        the dashboard
+      </TooltipContent>
+    </Tooltip>
+  {/if}
 </div>
