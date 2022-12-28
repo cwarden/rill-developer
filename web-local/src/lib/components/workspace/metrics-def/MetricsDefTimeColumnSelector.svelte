@@ -1,7 +1,6 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { IconButton } from "@rilldata/web-common/components/button";
-  import { Callout } from "@rilldata/web-common/components/callout";
   import AlertTriangle from "@rilldata/web-common/components/icons/AlertTriangle.svelte";
   import CrossIcon from "@rilldata/web-common/components/icons/CrossIcon.svelte";
   import TimestampIcon from "@rilldata/web-common/components/icons/TimestampType.svelte";
